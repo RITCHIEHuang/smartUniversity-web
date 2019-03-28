@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>注册页面</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="../../../dist/css/adminlte.min.css">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="../../../plugins/iCheck/square/blue.css">
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body class="hold-transition register-page">
+<div style="width:25%" class="register-box">
+    <div class="register-logo">
+        <b>“智慧校园”</b>一卡通系统</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body register-card-body">
+            <p class="login-box-msg" style="font-weight:bold;color: #007bff">账号注册</p>
+
+            <form method="post">
+                <div class="form-group has-feedback">
+                    <span class="fa fa-user form-control-feedback"></span>
+                    <input id="account" type="text" class="form-control" placeholder="用户名"
+                           onfocus="this.setAttribute('placeholder', '');
+           focus();" onblur="if (this.value == ''){this.setAttribute('placeholder', '用户名');
+}
+           blur();">
+                </div>
+                <div class="form-group has-feedback">
+                    <span class="fa fa-lock form-control-feedback"></span>
+                    <input id="password" type="password" class="form-control" placeholder="密码"
+                           onfocus="this.setAttribute('placeholder', '');
+           focus();" onblur="if (this.value == ''){this.setAttribute('placeholder', '密码');
+}
+           blur();">
+                </div>
+                <div class="form-group has-feedback">
+                    <span class="fa fa-lock form-control-feedback"></span>
+                    <input id="passwordConfirm" type="password" class="form-control" placeholder="确认密码"
+                           onfocus="this.setAttribute('placeholder', '');
+           focus();" onblur="if (this.value == ''){this.setAttribute('placeholder', '确认密码');
+}
+           blur();">
+                </div>
+
+
+                <div style="margin:10px auto;position:relative;left:10px" class="row">
+                    <span><input name="authority" type="radio" id="type_user" value="0"/>用户</span>
+                    <span style="margin-left:170px"><input name="authority" type="radio" id="type_merchant" value="1"/>商户</span>
+                </div>
+                <div style="margin:5px auto" class="col-4">
+                    <button type="button" class=" btn btn-primary btn-block btn-flat" onclick="register()">注册</button>
+                </div>
+                <!-- /.col -->
+            </form>
+
+            <div class="social-auth-links text-center">
+                <p>- 或 -</p>
+                <!--<a href="#" class="btn btn-block btn-primary">-->
+                <!--<i class="fa fa-facebook mr-2"></i>-->
+                <!--Sign up using Facebook-->
+                <!--</a>-->
+                <a href="registerwithEmail.html" class="btn btn-block btn-danger">
+                    邮箱注册
+                </a>
+            </div>
+            <a style="position: relative;left:160px" href="login.html" class="text-center">我已经拥有账号了</a>
+        </div>
+        <!-- /.form-box -->
+    </div><!-- /.card -->
+</div>
+<!-- /.register-box -->
+
+<!-- jQuery -->
+<script src="../../../plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="../../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- iCheck -->
+<script src="../../../plugins/iCheck/icheck.min.js"></script>
+<script>
+  $(function () {
+    $('input')
+      .iCheck({
+        checkboxClass: 'icheckbox_square-blue',
+        radioClass: 'iradio_square-blue',
+        increaseArea: '20%' // optional
+      })
+  })
+
+  function doRegister(form) {
+    let settings = {
+      'async': true,
+      'crossDomain': true,
+      'url': 'http://127.0.0.1:8080/api/auth/register',
+      'method': 'POST',
+      'headers': {},
+      'processData': false,
+      'contentType': false,
+      'mimeType': 'multipart/form-data',
+      'data': form
+    }
+
+    $.ajax(settings)
+      .done(function (response) {
+        response = JSON.parse(response)
+        if (response.code == '0') {
+          alert(response.message)
+          // $('#login-form').attr('action', '../admin/index.html')
+          sessionStorage.setItem('username', form.get('account'))
+          sessionStorage.setItem('password', form.get('password'))
+          sessionStorage.setItem('rememberpass', true)
+          window.location.href = 'login.html'
+
+        } else {
+          alert(response.message)
+        }
+      })
+
+  }
+
+  function register() {
+
+    let pass = $('#password')
+      .val()
+    let passConfirm = $('#passwordConfirm')
+      .val()
+
+
+    if (pass == passConfirm) {
+      let form = new FormData()
+      form.append('account', $('#account')
+        .val())
+      form.append('password', pass)
+      form.append('type', '2')
+      let val = $('input:radio[name="authority"]:checked')
+        .val()
+      if (val != null) {
+        form.append('shop_type', val)
+        doRegister(form)
+      } else {
+        alert('请选择用户类型')
+      }
+
+    } else {
+      alert('两次密码不一致')
+    }
+  }
+</script>
+</body>
+</html>
